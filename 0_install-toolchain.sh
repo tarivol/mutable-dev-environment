@@ -11,15 +11,6 @@ export LC_ALL=en_US.UTF-8
 locale-gen en_US.UTF-8
 dpkg-reconfigure locales
 
-# fix apt warnings like:
-# ==> default: dpkg-preconfigure: unable to re-open stdin: No such file or directory
-# http://serverfault.com/questions/500764/dpkg-reconfigure-unable-to-re-open-stdin-no-file-or-directory
-export LANGUAGE=en_US.UTF-8
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-locale-gen en_US.UTF-8
-dpkg-reconfigure locales
-
 # Install some additional drivers, including support for FTDI dongles
 # http://askubuntu.com/questions/541443/how-to-install-usbserial-and-ftdi-sio-modules-to-14-04-trusty-vagrant-box
 sudo apt-get update -qq
@@ -29,7 +20,7 @@ sudo modprobe ftdi_sio vendor=0x0403 product=0x6001
 # Install basic development tools
 sudo dpkg --add-architecture i386
 sudo apt-get update -qq
-sudo apt-get install -y build-essential autotools-dev autoconf pkg-config libusb-1.0-0 libusb-1.0-0-dev libftdi1 libftdi-dev git libc6:i386 libncurses5:i386 libstdc++6:i386 cowsay figlet language-pack-en
+sudo apt-get install -y build-essential cmake autotools-dev autoconf pkg-config libusb-1.0-0 libusb-1.0-0-dev libftdi1 libftdi-dev git libc6:i386 libncurses5:i386 libstdc++6:i386 cowsay figlet language-pack-en
 sudo locale-gen UTF-8
 
 # Install python
@@ -44,29 +35,26 @@ sudo ln -s /usr /usr/local/CrossPack-AVR
 
 # Install openocd
 cd /home/vagrant
-wget -nv https://downloads.sourceforge.net/project/openocd/openocd/0.11.0/openocd-0.11.0.tar.gz --no-check-certificate
-tar xfz openocd-0.11.0.tar.gz
-cd openocd-0.11.0
+wget -nv https://downloads.sourceforge.net/project/openocd/openocd/0.12.0/openocd-0.12.0.tar.gz --no-check-certificate
+tar xfz openocd-0.12.0.tar.gz
+cd openocd-0.12.0
 ./configure --enable-ftdi --enable-stlink
 make
 sudo make install
 cd /home/vagrant
-rm -rf openocd-0.11.0
-rm *.tar.gz
 
 # Install stlink
 cd /home/vagrant
-wget -nv https://github.com/texane/stlink/archive/v1.1.0.tar.gz --no-check-certificate
-tar xfz v1.1.0.tar.gz
-cd stlink-1.1.0
-./autogen.sh
-./configure
-make
+wget -nv https://github.com/texane/stlink/archive/v1.7.0.tar.gz --no-check-certificate
+tar xfz v1.7.0.tar.gz
+cd stlink-1.7.0
+make clean
+make release
 sudo make install
-sudo cp 49-stlink*.rules /etc/udev/rules.d/
+sudo cp -a config/udev/rules.d/* /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
 cd /home/vagrant
-rm -rf stlink-1.1.0
-rm *.tar.gz
 
 # Allow non-root users to access USB devices such as Atmel AVR and Olimex
 # programmers, FTDI dongles...
