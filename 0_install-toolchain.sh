@@ -11,6 +11,12 @@ export LC_ALL=en_US.UTF-8
 locale-gen en_US.UTF-8
 dpkg-reconfigure locales
 
+if test -n "$(find /vagrant/custom_certs -maxdepth 1 -name "*.crt" -print -quit)"; then
+	echo "Enabling custom certificates..."
+	sudo cp /vagrant/custom_certs/*.crt /usr/local/share/ca-certificates/
+	sudo update-ca-certificates
+fi
+
 # Install some additional drivers, including support for FTDI dongles
 # http://askubuntu.com/questions/541443/how-to-install-usbserial-and-ftdi-sio-modules-to-14-04-trusty-vagrant-box
 sudo apt-get update -qq
