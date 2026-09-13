@@ -1,0 +1,6 @@
+https://jeremyhajek.com/2022/12/17/vagrant-boxes-suddenly-not-able-to-ssh.html
+https://stackoverflow.com/questions/48888365/openssh-using-private-key-on-windows-unprotected-private-key-file-error
+
+# From the Command Prompt (CMD) not PowerShell
+icacls .vagrant\machines\default\virtualbox\private_key /inheritance:r
+icacls  .vagrant\machines\default\virtualbox\private_key /grant:r "%username%":"(R)"
